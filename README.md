@@ -8,62 +8,100 @@ To write a program to predict the profit of a city using the linear regression m
 2. Anaconda – Python 3.7 Installation / Jupyter notebook
 
 ## Algorithm
-```
-1.Start the program
-2.Import the numpy.pandas and matplotlib 
-3.Read the file which store the data 
-4.Declare x as hours and y as scores of the data 
-5.Using loop predit the data and find the y-intercept, slope using the formulae. 
-6.Find the best fit using the straight line formula
-7.Display the data in graph using the matplotlib libraries 8.Stop the Program. 
-```
+1.Import the required library and read the dataframe.
+
+2.Write a function computeCost to generate the cost function.
+
+3.Perform iterations og gradient steps with learning rate.
+
+4.Plot the Cost function using Gradient Descent and generate the required graph.
+
 ## Program:
 ```
 /*
 Program to implement the linear regression using gradient descent.
-Developed by: sv.Deepika
-RegisterNumber:  212220040161
-/*
+Developed by: M.BHAVISHYA
+RegisterNumber: 212221230061
+*/
 import numpy as np
-import pandas as pd
 import matplotlib.pyplot as plt
-dataset=pd.read_csv("/content/student_scores.csv")
-dataset.head()
-dataset.isnull().sum()
-x=dataset.Hours
-x.head()
-y=dataset.Scores
-y.head()
-n=len(x)
-m=0
-c=0
-L=0.01
-loss=[]
-for i in range(10000):
-  ypred=m*x+c
-  MSE=(1/n)*sum((ypred-y)*2)
-  dm=(2/n)*sum(x*(ypred-y))
-  dc=(2/n)*sum(ypred-y)
-  c=c-L*dc
-  m=m-L*dm
-  loss.append(MSE)
-  print(m,c)
-  y_pred=m*x+c
-plt.scatter(x,y,color='red')
-plt.plot(x,y_pred)
-plt.xlabel("Study hours")
-plt.ylabel("Scores")
-plt.title("Study hrs vs Scores")
-plt.plot(loss)
-plt.xlabel("iterations")
-plt.ylabel("loss")
-*/
-*/
+import pandas as pd
+
+data=pd.read_csv("/content/ex1.txt", header=None)
+
+plt.scatter(data[0],data[1])
+plt.xticks(np.arange(5,30,step=5))
+plt.yticks(np.arange(-5,30,step=5))
+plt.xlabel("Population of City (10,000s)")
+plt.ylabel("Profit ($10,000)")
+plt.title("Profit Prediction")
+
+def computeCost(X,y,theta):
+  m=len(y) #length of the training data
+  h=X.dot(theta) #hypothesis
+  square_err=(h - y)**2
+
+  return 1/(2*m) * np.sum(square_err)     #returning
+
+data_n=data.values
+m=data_n[:,0].size
+X=np.append(np.ones((m,1)),data_n[:,0].reshape(m,1),axis=1)
+y=data_n[:,1].reshape(m,1)
+theta=np.zeros((2,1))
+ 
+computeCost(X,y,theta)  # Call the function
+
+def gradientDescent(X,y,theta,alpha,num_iters):
+  m=len(y)
+  J_history=[]
+
+  for i in range(num_iters):
+    predictions = X.dot(theta)
+    error = np.dot(X.transpose(),(predictions -y))
+    descent=alpha * 1/m * error
+    theta-=descent
+    J_history.append(computeCost(X,y,theta))
+
+  return theta, J_history
+
+theta,J_history = gradientDescent(X,y,theta,0.01,1500)
+print("h(x)  ="+str(round(theta[0,0],2))+" + "+str(round(theta[1,0],2))+"x1")
+
+plt.plot(J_history)
+plt.xlabel("Iteration")
+plt.ylabel("$J(\Theta)$")
+plt.title("Cost function using Gradient Descent")
+
+plt.scatter(data[0],data[1])
+x_value=[x for x in range(25)]
+y_value=[y*theta[1]+theta[0] for y in x_value]
+plt.plot(x_value,y_value,color="g")
+plt.xticks(np.arange(5,30,step=5))
+plt.yticks(np.arange(-5,30,step=5))
+plt.xlabel("Population of City (10,000s)")
+plt.ylabel("Profit ($10,000)")
+plt.title("Profit Prediction")
+
+def predict(x,theta):
+  predictions=np.dot(theta.transpose(),x)
+
+  return predictions[0]
+
+predict1=predict(np.array([1,3.5]),theta)*10000
+print("For population = 35,000,we predict a profit of $"+str(round(predict1,0)))
+
+predict2=predict(np.array([1,7]),theta)*10000
+print("For population = 70,000,we predict a profit of $"+str(round(predict2,0)))
 ```
 
 ## Output:
-![image](https://github.com/SVDeepu/Implementation-of-Linear-Regression-Using-Gradient-Descent/blob/e5a7ec2815a639fa3283e335250c639b7b9c7413/WhatsApp%20Image%202022-10-14%20at%2008.57.54.jpg)
+![image](https://user-images.githubusercontent.com/94679395/195087216-4055e452-5f18-409b-a03a-144cdc482f15.png)
+![image](https://user-images.githubusercontent.com/94679395/195087262-284c4dcc-679a-4da9-ab06-50490fda8806.png)
+![image](https://user-images.githubusercontent.com/94679395/195087343-cb531a41-1332-4bab-8689-b29322336c49.png)
+![image](https://user-images.githubusercontent.com/94679395/195087377-23449e9a-2b8a-45cb-a9b6-8ad9010389e3.png)
+![image](https://user-images.githubusercontent.com/94679395/195087414-c5a5a9e1-8fba-47ab-bc5b-3c46f8fec5b3.png)
 
-![image](https://github.com/SVDeepu/Implementation-of-Linear-Regression-Using-Gradient-Descent/blob/2032d30d8e1a8d743e9d5bd96bc95bf46164422c/WhatsApp%20Image%202022-10-14%20at%2008.59.27.jpg)
+
+
 ## Result:
 Thus the program to implement the linear regression using gradient descent is written and verified using python programming.
